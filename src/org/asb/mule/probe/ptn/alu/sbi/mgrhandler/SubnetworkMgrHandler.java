@@ -32,7 +32,7 @@ public class SubnetworkMgrHandler {
 
 		Vector<TopologicalLink_T> emsTPLinkVector = new Vector<TopologicalLink_T>();
 
-		subnetworkMgr.getAllTopologicalLinks(subnetworkName, 50, tpLinkList, tpLinkIt);
+		subnetworkMgr.getAllTopologicalLinks(subnetworkName, 1000, tpLinkList, tpLinkIt);
 
 		for (TopologicalLink_T topologicalLink : tpLinkList.value) {
 			emsTPLinkVector.addElement(topologicalLink);
@@ -76,7 +76,7 @@ public class SubnetworkMgrHandler {
 
 		java.util.Vector emsSNCVector = new java.util.Vector();
 
-		subnetworkMgr.getAllSubnetworkConnections(subnetworkName, layerRateList, 50, sncList, sncIt);
+		subnetworkMgr.getAllSubnetworkConnections(subnetworkName, layerRateList, 1000, sncList, sncIt);
 
 		for (int i = 0; i < sncList.value.length; i++) {
 			emsSNCVector.addElement(sncList.value[i]);

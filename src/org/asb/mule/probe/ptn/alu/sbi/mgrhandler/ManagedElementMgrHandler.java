@@ -378,7 +378,7 @@ public class ManagedElementMgrHandler {
 
 	public CrossConnect_T[] retrieveAllCrossConnections(ManagedElementMgr_I mgr, NameAndStringValue_T[] meName, short[] connectionRateList)
 			throws ProcessingFailureException {
-		int how_many = 50;
+		int how_many = 1000;
 
 		java.util.Vector ccs = new java.util.Vector();
 		CrossConnectList_THolder ccList = new CrossConnectList_THolder();

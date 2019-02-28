@@ -418,18 +418,26 @@ public class AluService implements NbiService {
 		List<TopologicalLink_T> sections = new ArrayList<TopologicalLink_T>();
 		// NameAndStringValue_T[] subnetDn = VendorDNFactory.createSubnetworkDN(corbaService.getEmsDn(), "PTN");
 		try {
-			MultiLayerSubnetwork_T[] subs = EMSMgrHandler.instance().retrieveAllTopLevelSubnetworks(corbaService.getNmsSession().getEmsMgr());
-			for (MultiLayerSubnetwork_T sub : subs) {
-				try {
-					TopologicalLink_T[] vendorSectionList = SubnetworkMgrHandler.instance().retrieveAllTopologicalLinks(
-							corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), sub.name, errorlog);
-					sections.addAll(Arrays.asList(vendorSectionList));
-				} catch (ProcessingFailureException e) {
-					errorlog.error("retrieveAllSections ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
-				} catch (org.omg.CORBA.SystemException e) {
-					errorlog.error("retrieveAllSections CORBA.SystemException: " + e.getMessage(), e);
-				}
-			}
+//			MultiLayerSubnetwork_T[] subs = EMSMgrHandler.instance().retrieveAllTopLevelSubnetworks(corbaService.getNmsSession().getEmsMgr());
+//			for (MultiLayerSubnetwork_T sub : subs) {
+//				try {
+//					TopologicalLink_T[] vendorSectionList = SubnetworkMgrHandler.instance().retrieveAllTopologicalLinks(
+//							corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), sub.name, errorlog);
+//					sections.addAll(Arrays.asList(vendorSectionList));
+//				} catch (ProcessingFailureException e) {
+//					errorlog.error("retrieveAllSections ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
+//				} catch (org.omg.CORBA.SystemException e) {
+//					errorlog.error("retrieveAllSections CORBA.SystemException: " + e.getMessage(), e);
+//				}
+//			}
+			NameAndStringValue_T[] subnetDnSdh = VendorDNFactory.createSubnetworkDN(corbaService.getEmsDn(), "SDH");
+			NameAndStringValue_T[] subnetDnOtn = VendorDNFactory.createSubnetworkDN(corbaService.getEmsDn(), "OTN");
+			TopologicalLink_T[] vendorSectionListSdh = SubnetworkMgrHandler.instance().retrieveAllTopologicalLinks(
+					corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), subnetDnSdh, errorlog);
+			TopologicalLink_T[] vendorSectionListOtn = SubnetworkMgrHandler.instance().retrieveAllTopologicalLinks(
+					corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), subnetDnOtn, errorlog);
+			sections.addAll(Arrays.asList(vendorSectionListSdh));
+			sections.addAll(Arrays.asList(vendorSectionListOtn));
 		} catch (ProcessingFailureException e) {
 			errorlog.error("retrieveAllSections ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
 		} catch (org.omg.CORBA.SystemException e) {
@@ -547,28 +555,41 @@ public class AluService implements NbiService {
 	public List<SubnetworkConnection> retrieveAllSNCs() {
 		List<SubnetworkConnection> sncList = new ArrayList<SubnetworkConnection>();
 		List<SubnetworkConnection_T> snclist = new ArrayList<SubnetworkConnection_T>();
-		SubnetworkConnection_T[] sncs = null;
-		// NameAndStringValue_T[] subnetworkName = VendorDNFactory.createSubnetworkDN(corbaService.getEmsDn(), "PTN");
+//		SubnetworkConnection_T[] sncs = null;
+		SubnetworkConnection_T[] otnSncs = null;
 		try {
 			// NameAndStringValue_T[][] subs = EMSMgrHandler.instance().retrieveAllTopLevelSubnetworkNames(corbaService.getNmsSession().getEmsMgr());
-			MultiLayerSubnetwork_T[] subs = EMSMgrHandler.instance().retrieveAllTopLevelSubnetworks(corbaService.getNmsSession().getEmsMgr());
-			for (MultiLayerSubnetwork_T sub : subs) {
-				try {
-					sbilog.info(sub);
-					sncs = SubnetworkMgrHandler.instance().retrieveAllSNCs(corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), sub.name, new short[0]);
-					snclist.addAll(Arrays.asList(sncs));
-				} catch (ProcessingFailureException e) {
-					errorlog.error("retrieveAllSNCs ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
-				} catch (org.omg.CORBA.SystemException e) {
-					errorlog.error("retrieveAllSNCs CORBA.SystemException: " + e.getMessage(), e);
-				}
+//			MultiLayerSubnetwork_T[] subs = EMSMgrHandler.instance().retrieveAllTopLevelSubnetworks(corbaService.getNmsSession().getEmsMgr());
+//			for (MultiLayerSubnetwork_T sub : subs) {
+//				try {
+//					sbilog.info(sub);
+//					sncs = SubnetworkMgrHandler.instance().retrieveAllSNCs(corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), sub.name, new short[0]);
+//					snclist.addAll(Arrays.asList(sncs));
+//				} catch (ProcessingFailureException e) {
+//					errorlog.error("retrieveAllSNCs ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
+//				} catch (org.omg.CORBA.SystemException e) {
+//					errorlog.error("retrieveAllSNCs CORBA.SystemException: " + e.getMessage(), e);
+//				}
+//			}
+			NameAndStringValue_T[] subnetworkNameOtn = VendorDNFactory.createSubnetworkDN(corbaService.getEmsDn(), "OTN");
+			for (NameAndStringValue_T subnetworkNameOtn1 : subnetworkNameOtn) {
+				sbilog.info("retrieveAllOtnSNCs name: " + subnetworkNameOtn1.name);
+				sbilog.info("retrieveAllOtnSNCs value: " + subnetworkNameOtn1.value);
+			}
+			sbilog.info("retrieveAllOtnSNCs : " + subnetworkNameOtn.toString());
+			otnSncs = SubnetworkMgrHandler.instance().retrieveAllSNCs(corbaService.getNmsSession().getMultiLayerSubnetworkMgr(), subnetworkNameOtn, new short[0]);
+			if (null != otnSncs) {
+				snclist.addAll(Arrays.asList(otnSncs));
+			} else {
+				sbilog.info("retrieveAllOtnSNCs size = 0");
 			}
 		} catch (ProcessingFailureException e) {
 			errorlog.error("retrieveAllSNCs ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
 		} catch (org.omg.CORBA.SystemException e) {
 			errorlog.error("retrieveAllSNCs CORBA.SystemException: " + e.getMessage(), e);
 		}
-		sbilog.info("retrieveAllSNCs : " + sncs.length);
+		sbilog.info("retrieveAllOtnSNCs : size-" + otnSncs==null?0:otnSncs.length);
+//		sbilog.info("retrieveAllOtnSNCs : " + otnSncs.length);
 		// for (int i = 0; i < sncs.length; i++) {
 		// sbilog.debug("The " + i + " snc: " + sncs[i]);
 		// }
@@ -693,9 +714,9 @@ public class AluService implements NbiService {
             layer = new short[0];
 			ccs = ManagedElementMgrHandler.instance().retrieveAllCrossConnections(corbaService.getNmsSession().getManagedElementMgr(), neDn, layer);
 		} catch (ProcessingFailureException e) {
-			errorlog.error("retrieveAllCrossconnections ProcessingFailureException: " + CodeTool.isoToGbk(e.errorReason), e);
+			errorlog.error("retrieveAllCrossconnections ProcessingFailureException: " + neName + CodeTool.isoToGbk(e.errorReason), e);
 		} catch (org.omg.CORBA.SystemException e) {
-			errorlog.error("retrieveAllCrossconnections CORBA.SystemException: " + e.getMessage(), e);
+			errorlog.error("retrieveAllCrossconnections CORBA.SystemException: " + neName + e.getMessage(), e);
 		}
 		if (ccs != null) {
 			for (CrossConnect_T vendorIPCc : ccs) {
